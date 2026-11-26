@@ -1,0 +1,49 @@
+name: SYED PlanGuard
+description: Cost and risk gate for Terraform plans — estimates monthly AWS cost and runs security, cost and change-safety rules.
+branding:
+  icon: shield
+  color: blue
+inputs:
+  plan-file:
+    description: Path to the output of `terraform show -json tfplan`
+    required: true
+  budget:
+    description: Monthly budget in USD (0 = no budget)
+    default: "50"
+  fail-on:
+    description: Fail on findings at or above this severity (critical, high, medium, low)
+    default: high
+  title:
+    description: Title used in the job summary
+    default: PlanGuard
+outputs:
+  decision:
+    description: PASS, WARN or FAIL
+    value: ${{ steps.run.outputs.decision }}
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+    - id: run
+      shell: bash
+      env:
+        PLAN_FILE: ${{ inputs.plan-file }}
+        BUDGET: ${{ inputs.budget }}
+        FAIL_ON: ${{ inputs.fail-on }}
+        TITLE: ${{ inputs.title }}
+        PYTHONPATH: ${{ github.action_path }}/backend
+      run: |
+        set +e
+        python -m planguard "$PLAN_FILE" --budget "$BUDGET" --fail-on "$FAIL_ON" --format json > "$RUNNER_TEMP/planguard.json"
+        code=$?
+        set -e
+        if [ "$code" -le 1 ]; then
+          decision=$(python -c 'import json,sys; print(json.load(open(sys.argv[1]))["decision"])' "$RUNNER_TEMP/planguard.json")
+          python -m planguard "$PLAN_FILE" --budget "$BUDGET" --fail-on "$FAIL_ON" --title "$TITLE" --summary || true
+        else
+          decision=ERROR
+        fi
+        echo "decision=$decision" >> "$GITHUB_OUTPUT"
+        exit $code
