@@ -1,0 +1,141 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "planguard_sample": "A secure but expensive Kubernetes platform for a small team",
+  "resource_changes": [
+    {
+      "address": "aws_eks_cluster.platform",
+      "mode": "managed",
+      "type": "aws_eks_cluster",
+      "name": "platform",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "name": "platform",
+          "version": "1.33"
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_eks_node_group.default",
+      "mode": "managed",
+      "type": "aws_eks_node_group",
+      "name": "default",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "instance_types": [
+            "m5.large"
+          ],
+          "scaling_config": [
+            {
+              "desired_size": 3,
+              "min_size": 3,
+              "max_size": 6
+            }
+          ]
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_nat_gateway.az_a",
+      "mode": "managed",
+      "type": "aws_nat_gateway",
+      "name": "az_a",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "connectivity_type": "public"
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_nat_gateway.az_b",
+      "mode": "managed",
+      "type": "aws_nat_gateway",
+      "name": "az_b",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "connectivity_type": "public"
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_eip.nat_a",
+      "mode": "managed",
+      "type": "aws_eip",
+      "name": "nat_a",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "domain": "vpc"
+        },
+        "after_unknown": {
+          "network_interface": true
+        }
+      }
+    },
+    {
+      "address": "aws_eip.nat_b",
+      "mode": "managed",
+      "type": "aws_eip",
+      "name": "nat_b",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "domain": "vpc"
+        },
+        "after_unknown": {
+          "network_interface": true
+        }
+      }
+    },
+    {
+      "address": "aws_lb.ingress",
+      "mode": "managed",
+      "type": "aws_lb",
+      "name": "ingress",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "load_balancer_type": "application",
+          "internal": false
+        },
+        "after_unknown": {}
+      }
+    }
+  ]
+}
